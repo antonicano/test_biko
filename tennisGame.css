@@ -1,0 +1,27 @@
+#gameContainer, #waitingForGame, #tennisBall, #waitBall{
+    display: none;
+}
+
+#gameContainer{
+    width: 100%;
+    height: 50%;
+    display: flex;
+}
+
+#gameArea{
+    width: 50%;
+}
+
+#gameInfoArea{
+    width: 50%;
+}
+
+#playersInfo{
+    display: flex;
+    justify-content: space-around;
+}
+
+#scoreInfo{
+    display: flex;
+    justify-content: space-around;
+}

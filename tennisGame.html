@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TennisGame</title>
+    <link rel="stylesheet" href="tennisGame.css">
+</head>
+<body>
+    <h1>Welcome to Tennis Game</h1>
+    <div id="formContainer">
+        <form id="form" action="">
+            <label for="playerName">Nombre de jugador</label>
+            <input type="text" name="playerName" id="playerName" value="">
+            <button type="submit" id="searchGameButton">Buscar partida</button>
+        </form>
+    </div>
+    <div id="waitingForGame">
+        Esperando un rival digno
+    </div>
+    <div id="gameContainer">
+        <div id="gameArea">
+            <img id="tennisBall" src="/images/tennis_ball.png" onclick="hitBall()"/>
+            <div id="waitBall">
+                Esperando la pelota...
+            </div>
+        </div>
+        <div id="gameInfoArea">
+            <div id="playersInfo">
+                <div id="namePlayer1">
+                </div>
+                <div id="namePlayer2">
+                </div>
+            </div>
+            <div id="scoreInfo">
+                <div id="scorePlayer1">
+                </div>
+                <div id="scorePlayer2">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        var socket = io();
+
+        var form = document.getElementById('form');
+        var input = document.getElementById('playerName');
+
+        var infoPlayer = null;
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('join', input.value);
+                $('#formContainer').hide();
+                $('#waitingForGame').show();
+            }else{
+                alert('no player name');
+            }
+        });
+
+        socket.on('game:ready', function(msg) {
+            console.log(msg);
+            $('#waitingForGame').hide();
+            $('#gameContainer').show();
+        });
+
+        socket.on('starter:player', function(res) {
+            infoPlayer = res;
+            console.log(infoPlayer);
+            
+            if(infoPlayer.starter){
+                $('#tennisBall').show();
+            }
+
+            $('#namePlayer1').html(infoPlayer.info.player1.name);
+            $('#scorePlayer1').html(infoPlayer.info.player1.score);
+            $('#namePlayer2').html(infoPlayer.info.player2.name);
+            $('#scorePlayer2').html(infoPlayer.info.player2.score);
+        });
+
+        function hitBall(){
+            socket.emit('smash', infoPlayer.socketId);
+            $('#tennisBall').hide();
+        }
+        
+        socket.on('game:rally', function(res) {
+            if(res.turn){
+                $('#tennisBall').show(); 
+            }else{
+                $('#tennisBall').hide();
+            }
+        });
+
+        socket.on('player:disconnected', function(){
+            alert('some player has disconnected');
+            $('#gameContainer').hide();
+            $('#waitingForGame').show();
+        });
+
+        socket.on('score', function(score){
+            $('#scorePlayer1').html(score.player1);
+            $('#scorePlayer2').html(score.player2);
+            alert(score.msg)
+        });
+
+    </script>
+</body>
+</html>

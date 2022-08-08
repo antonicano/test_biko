@@ -176,10 +176,14 @@ function distributePoints(){
       tennisGame.player1.score = 'ADV'
     }else if(tennisGame.player1.score === 40 && tennisGame.player2.score === 'ADV'){
       tennisGame.player2.score = 40;
-    }else if(tennisGame.player1.score === 'ADV' && tennisGame.player2.score === 40){
+    }else if(tennisGame.player1.score === 'ADV' && tennisGame.player2.score === 40 || 
+             tennisGame.player1.score === 40 && tennisGame.player2.score !== 'ADV' ||
+             tennisGame.player1.score === 40 && tennisGame.player2.score !== 40){
       tennisGame.player1.points = 1;
       tennisGame.player1.score = 0;
       tennisGame.player2.score = 0;
+
+      io.emit('point:scored', 'Punto para el jugador 1');
 
       if(tennisGame.player1.points === 6){
         tennisGame.player1.sets += 1;
@@ -202,10 +206,14 @@ function distributePoints(){
       tennisGame.player2.score = 'ADV'
     }else if(tennisGame.player2.score === 40 && tennisGame.player1.score === 'ADV'){
       tennisGame.player1.score = 40;
-    }else if(tennisGame.player2.score === 'ADV' && tennisGame.player1.score === 40){
+    }else if(tennisGame.player2.score === 'ADV' && tennisGame.player1.score === 40 || 
+             tennisGame.player2.score === 40 && tennisGame.player1.score !== 'ADV' ||
+             tennisGame.player2.score === 40 && tennisGame.player1.score !== 40){
       tennisGame.player2.points = 1;
       tennisGame.player2.score = 0;
       tennisGame.player1.score = 0;
+      
+      io.emit('point:scored', 'Punto para el jugador 2');
 
       if(tennisGame.player2.points === 6){
         tennisGame.player2.sets += 1;

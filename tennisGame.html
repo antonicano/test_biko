@@ -107,6 +107,10 @@
             alert(score.msg)
         });
 
+        socket.on('point:scored', function(msg){
+            console.log(msg);
+        });
+
     </script>
 </body>
 </html>

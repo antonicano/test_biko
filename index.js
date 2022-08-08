@@ -13,10 +13,6 @@ let timeout = null;
 
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
-
-app.get('/game', (req, res) => {
     res.sendFile(__dirname + '/tennisGame.html');
 });
 
@@ -32,60 +28,69 @@ app.get('/images/tennis_ball.png', (req, res) => {
 io.on('connection', (socket) => {
 
     socket.on('join', (name) => {
-      const gameInfo = generatePlayer(name, socket.id);
-      socket.emit('join', gameInfo);
-      if(gameInfo.gameReady){
-        io.emit('game:ready', 'Game ready');
-        tennisGame = new TennisGame(players[0], players[1]);
-
-        players[0].starter = true;
-
-        io.to(players[0].socketId).emit('starter:player', {
-          player: 1,
-          socketId: players[0].socketId,
-          info: {
-            player1:{
-              name: players[0].name,
-              score: players[0].score
+      if(players.length < 2){
+        const gameInfo = generatePlayer(name, socket.id);
+        socket.emit('join', gameInfo);
+        if(gameInfo.gameReady){
+          io.emit('game:ready', 'Game ready');
+          tennisGame = new TennisGame(players[0], players[1]);
+  
+          players[0].starter = true;
+  
+          io.to(players[0].socketId).emit('starter:player', {
+            player: 1,
+            socketId: players[0].socketId,
+            info: {
+              player1:{
+                name: players[0].name,
+                sets: players[0].sets,
+                points: players[0].points,
+                score: players[0].score
+              },
+              player2:{
+                name: players[1].name,
+                sets: players[1].sets,
+                points: players[1].points,
+                score: players[1].score
+              }
             },
-            player2:{
-              name: players[1].name,
-              score: players[1].score
-            }
-          },
-          starter: true
-        });
-        io.to(players[1].socketId).emit('starter:player', {
-          player: 2,
-          socketId: players[1].socketId,
-          info:{
-            player1:{
-              name: players[0].name,
-              sets: players[0].sets,
-              points: players[0].points,
-              score: players[0].score
+            starter: true
+          });
+          io.to(players[1].socketId).emit('starter:player', {
+            player: 2,
+            socketId: players[1].socketId,
+            info:{
+              player1:{
+                name: players[0].name,
+                sets: players[0].sets,
+                points: players[0].points,
+                score: players[0].score
+              },
+              player2:{
+                name: players[1].name,
+                sets: players[1].sets,
+                points: players[1].points,
+                score: players[1].score
+              }
             },
-            player2:{
-              name: players[1].name,
-              sets: players[1].sets,
-              points: players[1].points,
-              score: players[1].score
-            }
-          },
-          starter:false
-        });
+            starter:false
+          });
+        }
+      }else{
+        io.to(socket.id).emit('game:unavailable', 'No te puedes unir en este momento');
       }
     });
 
     socket.on("disconnect", (reason) => {
-      console.log('id jugador desconectado '+ socket.id);
-      const indexDisconnectedPlayer = players.findIndex(player => player.socketId === socket.id);
-      players.splice(indexDisconnectedPlayer, 1);
-      checkPlayerList();
-      players.forEach(player => {
-        io.to(player.socketId).emit('player:disconnected');
-      });
-      restartGame();
+      if(players.find(player => player.socketId === socket.id)){
+        const indexDisconnectedPlayer = players.findIndex(player => player.socketId === socket.id);
+        players.splice(indexDisconnectedPlayer, 1);
+        checkPlayerList();
+        players.forEach(player => {
+          io.to(player.socketId).emit('player:disconnected');
+        });
+        restartGame();
+      }
     });
 
     socket.on('smash', (socketId) => {

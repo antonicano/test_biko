@@ -4,27 +4,8 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-
-class Player {
-  constructor(id, name, socketId) {
-    this.socketId = socketId;
-    this.id = id;
-    this.name = name;
-    this.starter = false;
-    this.sets = 0;
-    this.points = 0;
-    this.score = 0;
-    this.turn = false;
-    this.lastHitter = false;
-  }
-}
-
-class TennisGame {
-  constructor(player1, player2) {
-    this.player1 = player1;
-    this.player2 = player2;
-  }
-}
+const Player = require('./class/Player.js');
+const TennisGame = require('./class/TennisGame.js');
 
 players = [];
 tennisGame = null;

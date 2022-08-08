@@ -198,8 +198,8 @@ function distributePoints(){
          */
         if(tennisGame.player1.sets === 1){
           //Acaba el partido
-          restartGame();
           io.emit('game:end', 'El ganador es: '+ tennisGame.player1.name);
+          restartGame();
         }
       }
     }
@@ -231,8 +231,8 @@ function distributePoints(){
          */
         if(tennisGame.player2.sets === 1){
           //Acaba el partido
-          restartGame();
           io.emit('game:end', 'El ganador es: '+ tennisGame.player2.name);
+          restartGame();
         }
       }
     }
@@ -284,9 +284,9 @@ function getScore(){
   }else if(scorePlayer1 === 40 && scorePlayer2 === 40){
     msg = 'Deuce';
   }else if(scorePlayer1 === 'ADV' && scorePlayer2 === 40){
-    msg = 'Advantage Player1';
+    msg = 'Advantage: ' + tennisGame.player1.name;
   }else if(scorePlayer1 === 40 && scorePlayer2 === 'ADV'){
-    msg = 'Advantage Player2';
+    msg = 'Advantage: ' + tennisGame.player2.name;
   }
   
   score = {

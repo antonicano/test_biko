@@ -85,6 +85,7 @@ io.on('connection', (socket) => {
       players.forEach(player => {
         io.to(player.socketId).emit('player:disconnected');
       });
+      restartGame();
     });
 
     socket.on('smash', (socketId) => {
@@ -183,7 +184,7 @@ function distributePoints(){
     }else if(tennisGame.player1.score === 'ADV' && tennisGame.player2.score === 40 || 
              tennisGame.player1.score === 40 && tennisGame.player2.score !== 'ADV' ||
              tennisGame.player1.score === 40 && tennisGame.player2.score !== 40){
-      tennisGame.player1.points = 1;
+      tennisGame.player1.points += 1;
       tennisGame.player1.score = 0;
       tennisGame.player2.score = 0;
 
@@ -195,8 +196,10 @@ function distributePoints(){
         /**
          * En este caso jugaremos a 1 set pero comprobamos el número por si quisieramos cambiarlo
          */
-        if(sets === 1){
+        if(tennisGame.player1.sets === 1){
           //Acaba el partido
+          restartGame();
+          io.emit('game:end', 'El ganador es: '+ tennisGame.player1.name);
         }
       }
     }
@@ -214,7 +217,7 @@ function distributePoints(){
     }else if(tennisGame.player2.score === 'ADV' && tennisGame.player1.score === 40 || 
              tennisGame.player2.score === 40 && tennisGame.player1.score !== 'ADV' ||
              tennisGame.player2.score === 40 && tennisGame.player1.score !== 40){
-      tennisGame.player2.points = 1;
+      tennisGame.player2.points += 1;
       tennisGame.player2.score = 0;
       tennisGame.player1.score = 0;
       
@@ -226,8 +229,10 @@ function distributePoints(){
         /**
          * En este caso jugaremos a 1 set pero comprobamos el número por si quisieramos cambiarlo
          */
-        if(sets === 1){
+        if(tennisGame.player2.sets === 1){
           //Acaba el partido
+          restartGame();
+          io.emit('game:end', 'El ganador es: '+ tennisGame.player2.name);
         }
       }
     }
@@ -306,4 +311,8 @@ function getRandomArbitrary(min, max) {
 
 function wonPoint(playerName){
   io.emit('point:scored', 'Punto para: '+ playerName);
+}
+
+function restartGame(){
+  tennisGame = null;
 }

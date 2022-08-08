@@ -53,6 +53,9 @@
             </div>
         </div>
     </div>
+    <div id="unavailableGame">
+        No hay partidas disponibles ahora mismo.
+    </div>
     <div id="winnerScreen">
 
     </div>
@@ -159,6 +162,11 @@
             $('#gameContainer').css('display', 'none');
             $('#winnerScreen').css('display', 'block');
             $('#winnerScreen').html(msg);
+        });
+
+        socket.on('game:unavailable', function(msg){
+            $('#waitingForGame').hide();
+            $('#unavailableGame').show();
         });
 
     </script>

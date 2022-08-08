@@ -1,4 +1,4 @@
-#gameContainer, #waitingForGame, #tennisBall, #waitBall, #winnerScreen{
+#gameContainer, #waitingForGame, #tennisBall, #waitBall, #winnerScreen, #unavailableGame{
     display: none;
 }
 

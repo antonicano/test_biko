@@ -238,7 +238,9 @@ function distributePoints(){
     }
   }
 
-  getScore();
+  if(tennisGame){
+    getScore();
+  }
 }
 
 function getScore(){
@@ -315,4 +317,9 @@ function wonPoint(playerName){
 
 function restartGame(){
   tennisGame = null;
+  players.forEach(player => {
+    player.sets = 0;
+    player.points = 0;
+    player.score = 0;
+  });
 }

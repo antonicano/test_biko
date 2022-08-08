@@ -53,6 +53,9 @@
             </div>
         </div>
     </div>
+    <div id="winnerScreen">
+
+    </div>
 
     <div id="scoreModal" class="modal">
 
@@ -150,6 +153,12 @@
             setTimeout(() =>{
                 $('#scoreModal').css('display', 'none');
             },1000);
+        });
+
+        socket.on('game:end', function(msg){
+            $('#gameContainer').css('display', 'none');
+            $('#winnerScreen').css('display', 'block');
+            $('#winnerScreen').html(msg);
         });
 
     </script>

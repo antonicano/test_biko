@@ -1,4 +1,4 @@
-#gameContainer, #waitingForGame, #tennisBall, #waitBall{
+#gameContainer, #waitingForGame, #tennisBall, #waitBall, #winnerScreen{
     display: none;
 }
 
@@ -6,6 +6,11 @@
     width: 100%;
     height: 50%;
     display: flex;
+}
+
+#winnerScreen{
+    width: 100%;
+    height: 80%;
 }
 
 #gameArea{

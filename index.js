@@ -61,10 +61,14 @@ io.on('connection', (socket) => {
           info:{
             player1:{
               name: players[0].name,
+              sets: players[0].sets,
+              points: players[0].points,
               score: players[0].score
             },
             player2:{
               name: players[1].name,
+              sets: players[1].sets,
+              points: players[1].points,
               score: players[1].score
             }
           },
@@ -183,9 +187,10 @@ function distributePoints(){
       tennisGame.player1.score = 0;
       tennisGame.player2.score = 0;
 
-      io.emit('point:scored', 'Punto para el jugador 1');
+      wonPoint(tennisGame.player1.name);
 
-      if(tennisGame.player1.points === 6){
+      //jugaremos el set a 2 puntos
+      if(tennisGame.player1.points === 2){
         tennisGame.player1.sets += 1;
         /**
          * En este caso jugaremos a 1 set pero comprobamos el número por si quisieramos cambiarlo
@@ -213,9 +218,10 @@ function distributePoints(){
       tennisGame.player2.score = 0;
       tennisGame.player1.score = 0;
       
-      io.emit('point:scored', 'Punto para el jugador 2');
+      wonPoint(tennisGame.player2.name);
 
-      if(tennisGame.player2.points === 6){
+      //jugaremos el set a 2 puntos
+      if(tennisGame.player2.points === 2){
         tennisGame.player2.sets += 1;
         /**
          * En este caso jugaremos a 1 set pero comprobamos el número por si quisieramos cambiarlo
@@ -231,6 +237,10 @@ function distributePoints(){
 }
 
 function getScore(){
+  setsPlayer1 = tennisGame.player1.sets;
+  setsPlayer2 = tennisGame.player2.sets;
+  pointsPlayer1 = tennisGame.player1.points;
+  pointsPlayer2 = tennisGame.player2.points;
   scorePlayer1 = tennisGame.player1.score;
   scorePlayer2 = tennisGame.player2.score;
 
@@ -275,14 +285,25 @@ function getScore(){
   }
   
   score = {
-    player1: scorePlayer1,
-    player2: scorePlayer2,
+    player1: {
+      sets: setsPlayer1,
+      points : pointsPlayer1,
+      score:scorePlayer1,
+    },
+    player2: {
+      sets: setsPlayer2,
+      points : pointsPlayer2,
+      score:scorePlayer2,
+    },
     msg : msg
   };
-  console.log(score);
   io.emit('score', score);
 }
 
 function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min;
+}
+
+function wonPoint(playerName){
+  io.emit('point:scored', 'Punto para: '+ playerName);
 }

@@ -33,6 +33,18 @@
                 <div id="namePlayer2">
                 </div>
             </div>
+            <div id="setsInfo">
+                <div id="setsPlayer1">
+                </div>
+                <div id="setsPlayer2">
+                </div>
+            </div>
+            <div id="pointsInfo">
+                <div id="pointsPlayer1">
+                </div>
+                <div id="pointsPlayer2">
+                </div>
+            </div>
             <div id="scoreInfo">
                 <div id="scorePlayer1">
                 </div>
@@ -41,6 +53,16 @@
             </div>
         </div>
     </div>
+
+    <div id="scoreModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+          <p id="modalMsg"></p>
+        </div>
+      
+      </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
@@ -77,8 +99,12 @@
             }
 
             $('#namePlayer1').html(infoPlayer.info.player1.name);
+            $('#setsPlayer1').html(infoPlayer.info.player1.sets);
+            $('#pointsPlayer1').html(infoPlayer.info.player1.points);
             $('#scorePlayer1').html(infoPlayer.info.player1.score);
             $('#namePlayer2').html(infoPlayer.info.player2.name);
+            $('#setsPlayer2').html(infoPlayer.info.player2.sets);
+            $('#pointsPlayer2').html(infoPlayer.info.player2.points);
             $('#scorePlayer2').html(infoPlayer.info.player2.score);
         });
 
@@ -102,13 +128,28 @@
         });
 
         socket.on('score', function(score){
-            $('#scorePlayer1').html(score.player1);
-            $('#scorePlayer2').html(score.player2);
-            alert(score.msg)
+            $('#setsPlayer1').html(score.player1.sets);
+            $('#setsPlayer2').html(score.player2.sets);
+            $('#pointsPlayer1').html(score.player1.points);
+            $('#pointsPlayer2').html(score.player2.points);
+            $('#scorePlayer1').html(score.player1.score);
+            $('#scorePlayer2').html(score.player2.score);
+            
+            if(score.msg !== 'Love all'){
+                $('#modalMsg').text(score.msg);
+                $('#scoreModal').css('display', 'block')
+                setTimeout(() =>{
+                    $('#scoreModal').css('display', 'none');
+                },1000);
+            }
         });
 
         socket.on('point:scored', function(msg){
-            console.log(msg);
+            $('#modalMsg').text(msg);
+            $('#scoreModal').css('display', 'block')
+            setTimeout(() =>{
+                $('#scoreModal').css('display', 'none');
+            },1000);
         });
 
     </script>
